@@ -31,6 +31,7 @@ from recipe_gen.pipeline.train import train_model
 from recipe_gen.pipeline.batch import get_batch_information_general
 from recipe_gen.pipeline.eval import top_k_logits, sample_next_token
 
+
 def run_epoch(device, model, sampler, loss_compute, print_every, max_len,
               clip=None, teacher_forcing=False, max_name_len=15, **tensor_kwargs):
     """
@@ -90,11 +91,11 @@ def run_epoch(device, model, sampler, loss_compute, print_every, max_len,
             ),
             ingr_masks=batch_map['ingr_mask_tensor'],
             targets=batch_map['steps_tensor'][:, :-1],
-            max_len=max_len-1,
+            max_len=max_len - 1,
             start_token=START_INDEX,
             teacher_forcing=teacher_forcing,
             name_targets=name_targets[:, :-1],
-            max_name_len=max_name_len-1,
+            max_name_len=max_name_len - 1,
             visualize=False
         )
         loss, name_loss = loss_compute(
@@ -135,6 +136,7 @@ def run_epoch(device, model, sampler, loss_compute, print_every, max_len,
 
     return np.exp(total_loss / float(total_tokens))
 
+
 '''
 ==== RUN
 nohup python3 -u -m recipe_gen.models.baseline.train --data-dir <DATA FOLDER> --batch-size 25 --vocab-emb-size 300 --calorie-emb-size 5 --nhid 256 --nlayers 2 --lr 1e-3 --epochs 50 --annealing-rate 0.9 --save <MODEL FOLDER> --ingr-emb --ingr-gru --exp-name baseline > baseline.out &
@@ -153,8 +155,8 @@ if __name__ == "__main__":
     from recipe_gen.pipeline.batch import load_full_data, pad_recipe_info, load_recipe_tensors
 
     # Module imports
-    from . import create_model
-    from .generate import decode_single
+    from recipe_gen.models.baseline import create_model
+    from recipe_gen.models.baseline.generate import decode_single
 
     parser = argparse.ArgumentParser(description='Baseline for recipe generation (dynamic attn)')
     parser.add_argument('--data-dir', type=str, required=True, help='location of the data corpus')
@@ -168,29 +170,29 @@ if __name__ == "__main__":
     parser.add_argument('--lr', type=float, default=1e-4, help='initial learning rate')
     parser.add_argument('--clip', type=float, default=None, help='gradient clipping')
     parser.add_argument('--epochs', type=int, default=5, help='upper epoch limit')
-    
+
     parser.add_argument('--dropout', type=float, default=0.2,
-        help='dropout applied to layers (0 = no dropout)')
+                        help='dropout applied to layers (0 = no dropout)')
     parser.add_argument('--log-interval', type=int, default=500, metavar='N', help='report interval')
     parser.add_argument('--annealing-rate', type=float, default=1.0, metavar='N',
-        help='learning rate annealing (default 1.0 - no annealing, 0.0 - early stoppage)')
+                        help='learning rate annealing (default 1.0 - no annealing, 0.0 - early stoppage)')
     parser.add_argument('--teacher-forcing', default=None, type=int,
-        help='number of epochs to teacher-force when training (default ALL epochs)')
+                        help='number of epochs to teacher-force when training (default ALL epochs)')
     parser.add_argument('--save', type=str, default='<MODEL FOLDER>',
-        help='path to save the final model')
+                        help='path to save the final model')
 
     parser.add_argument('--exp-name', type=str, required=True, default='base', help='exp name')
     parser.add_argument('--ingr-gru', action='store_true', default=False,
-        help='Use BiGRU for ingredient encoding')
+                        help='Use BiGRU for ingredient encoding')
     parser.add_argument('--decode-name', action='store_true', default=False,
-        help='Multi-task learn to decode name along with recipe')
+                        help='Multi-task learn to decode name along with recipe')
     parser.add_argument('--ingr-emb', action='store_true', default=False,
-        help='Use Ingr embedding in encoder')
+                        help='Use Ingr embedding in encoder')
     parser.add_argument('--shared-proj', action='store_true', default=False,
-        help='Share projection layers for name and steps')
+                        help='Share projection layers for name and steps')
 
     parser.add_argument('--load-checkpoint', type=str, default=None,
-        help='Load from state dict checkpoint')
+                        help='Load from state dict checkpoint')
     args = parser.parse_args()
 
     start = datetime.now()

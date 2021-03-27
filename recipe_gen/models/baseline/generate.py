@@ -22,6 +22,7 @@ from recipe_gen.pipeline.batch import get_batch_information_general
 from recipe_gen.pipeline.visualization import get_batch_generated_recipes
 from recipe_gen.pipeline.eval import top_k_logits, sample_next_token
 
+
 def decode_single(device, model, sampler, **kwargs):
     # Get single example from test set
     batch = sampler.dataset.get_tensor_batch([0])
@@ -32,6 +33,7 @@ def decode_single(device, model, sampler, **kwargs):
 
     # Return the decoded values out of list
     return [item[0] for item in batch_reprs if item]
+
 
 def decode_batch(device, model, batch,
                  max_len, max_name_len=None, teacher_forcing=False,
@@ -66,7 +68,7 @@ def decode_batch(device, model, batch,
             ),
             ingr_masks=batch_map['ingr_mask_tensor'],
             targets=batch_map['steps_tensor'][:, :-1],
-            max_len=max_len-1,
+            max_len=max_len - 1,
             start_token=START_INDEX,
             teacher_forcing=teacher_forcing,
             logit_modifier_fxn=logit_modifier_fxn,

@@ -25,7 +25,7 @@ from functools import partial
 from datetime import datetime
 from tqdm import tqdm
 
-from .absolute_order_teacher import AbsoluteOrderTeacher
+from recipe_gen.analysis.absolute_order_teacher import AbsoluteOrderTeacher
 
 def generate_step_batches(df, randomize=False, batch_size=32):
     """

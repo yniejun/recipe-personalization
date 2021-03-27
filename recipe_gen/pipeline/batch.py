@@ -28,7 +28,8 @@ from recipe_gen.pipeline import DataFrameDataset
 from recipe_gen.language import PAD_INDEX, pretty_decode, pretty_decode_tokens, N_TECHNIQUES, PAD_TECHNIQUE_INDEX
 
 def load_full_data(dataset_folder,
-        base_splits=['train', 'valid_new', 'test_new']):
+        # base_splits=['train', 'valid_new', 'test_new']):
+    base_splits = ['train', 'validation', 'test']):
     """
     Load full data (including recipe information, user information)
 
@@ -82,14 +83,17 @@ def load_full_data(dataset_folder,
     return train_df, valid_df, test_df, user_items, df_r, ingr_map
 
 def pad_name(name_tokens, max_name_tokens=15):
+    name_tokens = name_tokens.replace("[", "").split(',')
     return name_tokens + [PAD_INDEX]*(max_name_tokens - len(name_tokens))
 
 def pad_steps(step_tokens, max_step_tokens=256):
     # Pad steps to maximum step length
+    step_tokens = step_tokens.replace("[", "").split(',')
     return step_tokens + [PAD_INDEX]*(max_step_tokens - len(step_tokens))
 
 def pad_ingredients(ingredient_tokens, max_ingredients=20, max_ingr_tokens=20):
     # Pad ingredients to maximum ingredient length
+    ## todo nest list
     new_tokens = [
         i[:max_ingr_tokens] + [PAD_INDEX]*(max_ingr_tokens - len(i[:max_ingr_tokens])) for
         i in ingredient_tokens[:max_ingredients]
@@ -138,6 +142,7 @@ def pad_recipe_info(df_r, max_name_tokens=15, min_ingredients=3, max_ingredients
     start = datetime.now()
 
     # Pad name
+    print(df_r['name_tokens'].head())
     df_r['name_tokens'] = df_r['name_tokens'].agg(lambda n: pad_name(n, max_name_tokens))
     print('{} - Padded names to maximum {} tokens'.format(
         datetime.now() - start, max_name_tokens

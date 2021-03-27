@@ -274,7 +274,7 @@ if __name__ == "__main__":
     from recipe_gen.pipeline.train import SimpleLossCompute
     from recipe_gen.pipeline.batch import load_full_data, pad_recipe_info, load_recipe_tensors
 
-    from . import create_model
+    from recipe_gen.models.baseline import create_model
 
     from recipe_gen.pipeline.visualization import get_tag_ix_batches_from_data, get_batch_generated_recipes
     from recipe_gen.pipeline.eval import top_k_logits, sample_next_token, top_p_logits
